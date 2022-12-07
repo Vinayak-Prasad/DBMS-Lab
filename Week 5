@@ -1,0 +1,70 @@
+create database employee;
+use employee;
+
+create table dept
+(
+deptno char(5) primary key,
+dname varchar(20),
+dloc varchar(20)
+);
+
+create table employee
+(
+empno char(5) primary key,
+ename varchar(20),
+mgr_no char(5),
+hiredate date,
+sal int,
+deptno char(5),
+foreign key(deptno) references dept(deptno) on delete cascade
+);
+
+create table incentives
+(
+empno char(5),
+incentive_date date primary key,
+incentive_amount int,
+foreign key(empno) references employee(empno) on delete cascade
+);
+
+create table project
+(
+pno char(5) primary key,
+pname varchar(20),
+ploc varchar(20)
+);
+
+create table assigned_to
+(
+empno char(5),
+pno char(5) primary key,
+job_role varchar(20),
+foreign key(empno) references employee(empno) on delete cascade
+);
+
+insert into dept values('D1','Engineering','Bangalore'),('D2','Sales & Marketing ','Hyderabad'),('D3','Development','Mysore'),
+('D4','Finance','Pune'),('D5','HR','Delhi'),('D6','R&D','Mangalore');
+select * from dept;
+
+insert into employee values('E1','Virat','M1','2017-05-13','5000','D1'),('E2','Abraham','M1','2018-07-03','10000','D1'),
+('E3','Rahul','M2','2017-11-29','3000','D2'),('E4','Ganesh','M2','2019-05-28','6000','D3'),('E5','Prasad','M5','2018-08-21','5000','D4'),
+('E6','Ram','M1','2020-04-05','8900','D1'),('E7','Abhinav','M6','2020-02-14','8900','D2'),('E8','Chandra','M3','2021-08-31','8800','D3');
+select * from employee;
+
+insert into project values('P18','Machine Learning','Bangalore'),('P17','AI','Delhi'),('P22','Full Stack','Hyderabad'),
+('P12','Quantum Computing','Pune'),('P20','Blockchain','Mangalore'),('P08','Web dev','Mysore'),('P29','Data analytics','Chennai');
+select * from project;
+
+insert into assigned_to values('E1','P22','Controller'),('E2','P18','Technician'),('E3','P08','Cloud Engineer'),
+('E4','P12','Supervisor'),('E5','P20','Developer'),('E6','P17','AI Engineer'),('E7','P29','Data Scientist');
+select * from assigned_to;
+
+insert into incentives values('E1','2019-12-19','2800'),('E2','2020-08-01','5400'),
+('E3','2018-01-10','3000'),('E4','2020-06-06','3000'),('E5','2019-10-19','1500');
+select * from incentives;
+
+select e.ename,p.pname,p.ploc from employee e, project p, assigned_to a where e.empno=a.empno and a.pno=p.pno and p.ploc in('Bangalore','Hyderabad','Mysore');
+
+select empno from employee where empno not in(select empno from incentives);
+
+select e.ename,e.empno,d.dname,a.job_role,d.dloc,p.ploc from employee e,dept d,assigned_to a, project p where e.empno=a.empno and e.deptno=d.deptno and p.ploc=d.dloc;
